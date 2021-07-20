@@ -1,7 +1,8 @@
 {:paths ["resources" "src"]
  :deps {org.clojure/clojure {:mvn/version "1.10.3"}}
  :aliases
- {:test {:extra-paths ["test"]
+ {:dev {:extra-deps {vvvvalvalval/scope-capture {:mvn/version "0.3.2"}}}
+  :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner {:git/tag "v0.4.0"
                                                             :git/sha "334f2e2"}}
          :main-opts ["-m" "cognitect.test-runner"]
