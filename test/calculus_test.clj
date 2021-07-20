@@ -62,5 +62,20 @@
 (deftest test-Exp
   (is (= (c/ToNumber ((c/Exp c/Two) c/Two)) 4))
   (is (= (c/ToNumber ((c/Exp c/Three) c/Two)) 9))
-  (is (= (c/ToNumber ((c/Exp c/Three) c/Three)) 27))
+  (is (= (c/ToNumber ((c/Exp c/Three) c/Three)) 27)))
+
+(deftest test-Multiply
+  (is (= (c/ToNumber ((c/Multiply c/Two) c/Two)) 4))
+  (is (= (c/ToNumber ((c/Multiply c/Three) c/Two)) 6))
+  (is (= (c/ToNumber ((c/Multiply c/Three) ((c/Multiply c/Three) c/Three))) 27)))
+
+(deftest test-Pred
+  (is (= (c/ToNumber (c/Pred c/Three)) 2))
+  (is (= (c/ToNumber (c/Pred c/One)) 0)))
+
+(deftest test-Subtract
+  (is (= (c/ToNumber ((c/Subtract c/Three) c/Two)) 1))
+  (is (= (c/ToNumber ((c/Subtract c/Three) c/Three)) 0))
+  ;; no encoding for negative numbers and this implementation bottoms out at identity or zero:
+  (is (= (c/ToNumber ((c/Subtract c/Two) c/Three)) 0))
   )

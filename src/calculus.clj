@@ -76,3 +76,25 @@
 (defn Exp
   [x]
   (fn [y] (y x)))
+
+(defn Multiply
+  [x]
+  (fn [y]
+    (fn [f] (x (y f)))))
+
+;; Struggled with this, but this helped: https://stackoverflow.com/a/8797545.
+;; The algorithm is still pretty damned inscrutable; I grok it well enough to
+;; emulate it, but I couldn't have written it from first principles...
+(defn Pred
+  ""
+  [n]
+  (fn [f]
+    (fn [x]
+      (((n (fn [g]
+             (fn [h] (h (g f)))))
+        (fn [_u] x))
+       (fn [u] u)))))
+
+(defn Subtract
+  [x]
+  (fn [y] ((y Pred) x)))
