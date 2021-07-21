@@ -36,6 +36,12 @@
   (is (= (((c/If c/T) c/F) c/T) c/F))
   (is (= (((c/If c/F) c/F) c/T) c/T)))
 
+(deftest test-Equivalent
+  (is (= ((c/Equivalent c/T) c/T) c/T))
+  (is (= ((c/Equivalent c/T) c/F) c/F))
+  (is (= ((c/Equivalent c/F) c/T) c/F))
+  (is (= ((c/Equivalent c/F) c/F) c/T)))
+
 (deftest test-ToBoolean
   (is (true? (c/ToBoolean c/T)))
   (is (false? (c/ToBoolean c/F))))
@@ -45,6 +51,10 @@
   (is (= (c/ToNumber c/One) 1))
   (is (= (c/ToNumber c/Two) 2))
   (is (= (c/ToNumber c/Three) 3)))
+
+(deftest test-IsZero
+  (is (= (c/IsZero c/Zero) c/T))
+  (is (= (c/IsZero c/One) c/F)))
 
 (deftest test-Succ
   (is (= (c/ToNumber (c/Succ c/Zero)) (c/ToNumber c/One)))
@@ -77,5 +87,9 @@
   (is (= (c/ToNumber ((c/Subtract c/Three) c/Two)) 1))
   (is (= (c/ToNumber ((c/Subtract c/Three) c/Three)) 0))
   ;; no encoding for negative numbers and this implementation bottoms out at identity or zero:
-  (is (= (c/ToNumber ((c/Subtract c/Two) c/Three)) 0))
-  )
+  (is (= (c/ToNumber ((c/Subtract c/Two) c/Three)) 0)))
+
+(deftest test-Factorial
+  (is (= (c/ToNumber ((c/Y c/Factorial) c/Three)) 6)) ;; boom goes the overflow
+  (is (= (c/ToNumber ((c/Z c/Factorial) c/Zero)) 1))
+  (is (= (c/ToNumber ((c/Z c/Factorial) c/Three)) 6)))

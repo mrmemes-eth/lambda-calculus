@@ -3,11 +3,11 @@
 ;; λx. λy. x
 (defn T
   [x]
-  (fn [y] x))
+  (fn [_y] x))
 
 ;; λx. λy. y
 (defn F
-  [x]
+  [_x]
   (fn [y] y))
 
 (defn And
@@ -31,7 +31,13 @@
   (fn [x]
     (fn [y] ((p x) y))))
 
+(defn Equivalent
+  "Returns T if the provided Church Booleans are the same"
+  [fx]
+  (fn [fy] (Not ((Xor fx) fy))))
+
 (defn ToBoolean
+  "Uses native booleans for test and debugging insight, not part of The Lambda Calculus."
   [f]
   ((f true) false))
 
@@ -53,16 +59,24 @@
   [f]
   (fn [x] (f (f (f x)))))
 
+(defn IsZero
+  "Determines if a Church Numeral is Zero or not based on whether the provided
+   function is invoked, since Zero doesn't invoke its passed function."
+  [n]
+  ((n (fn [_t] F)) T))
+
 (defn Succ
   [n]
   (fn [f]
     (fn [x] (f ((n f) x)))))
 
 (defn ToNumber
+  "Uses native numeric primitives for test and debugging insight, not part of The Lambda Calculus."
   [f]
   ((f (fn [n] (+ n 1))) 0))
 
 (defn FromNumber
+  "Uses native numeric primitives for test and debugging insight, not part of The Lambda Calculus."
   [n]
   (if (zero? n)
     Zero
@@ -86,7 +100,7 @@
 ;; The algorithm is still pretty damned inscrutable; I grok it well enough to
 ;; emulate it, but I couldn't have written it from first principles...
 (defn Pred
-  ""
+  "Yields the 'predecessor' of the provided Church-encoded numeral."
   [n]
   (fn [f]
     (fn [x]
@@ -98,3 +112,31 @@
 (defn Subtract
   [x]
   (fn [y] ((y Pred) x)))
+
+;; Combinators
+
+(defn Y
+  "A fun way to make stack overflows! This is a correct implementation, but
+   because of eager evaluation in Clojure, it recurses infinitely."
+  [f]
+  ((fn [x] (f (x x)))
+   (fn [x] (f (x x)))))
+
+(defn Factorial
+  [f]
+  (fn [n]
+    #_(((If (IsZero n)) One)
+     ((Multiply n) (f (Pred n))))
+    (if (zero? (ToNumber n))
+      One
+      ((Multiply n) (f (Pred n))))))
+
+(defn Z
+  "A Y Combinator for Generation Z... *cough* It's a Y Combinator in spirit, but
+  handles eager evaluation by wrapping things that would be eagerly evaluated in
+  functions to defer evaluation until JIT."
+  [f]
+   ((fn [x]
+     (f (fn [g] ((x x) g))))
+    (fn [x]
+      (f (fn [g] ((x x) g))))))
