@@ -3,11 +3,11 @@
 ;; λx. λy. x
 (defn T
   [x]
-  (fn [y] x))
+  (fn [_y] x))
 
 ;; λx. λy. y
 (defn F
-  [x]
+  [_x]
   (fn [y] y))
 
 (defn And
@@ -98,3 +98,28 @@
 (defn Subtract
   [x]
   (fn [y] ((y Pred) x)))
+
+;; Combinators
+
+(defn Y
+  "A fun way to make stack overflows! This is a correct implementation, but
+   because of eager evaluation, it recures infinitely."
+  [f]
+  ((fn [x] (f (x x)))
+   (fn [x] (f (x x)))))
+
+(defn Factorial
+  [f]
+  (fn [n]
+    (println n)
+    (((If n)
+      ((Multiply n) (f (Pred n))))
+     ;; Zero evaluates to false
+     One)))
+
+(defn Z
+  [f]
+   ((fn [x]
+     (f (fn [g] ((x x) g))))
+    (fn [x]
+      (f (fn [g] ((x x ) g))))))

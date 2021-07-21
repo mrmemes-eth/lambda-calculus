@@ -77,5 +77,9 @@
   (is (= (c/ToNumber ((c/Subtract c/Three) c/Two)) 1))
   (is (= (c/ToNumber ((c/Subtract c/Three) c/Three)) 0))
   ;; no encoding for negative numbers and this implementation bottoms out at identity or zero:
-  (is (= (c/ToNumber ((c/Subtract c/Two) c/Three)) 0))
+  (is (= (c/ToNumber ((c/Subtract c/Two) c/Three)) 0)))
+
+(deftest test-Factorial
+  (is (= (c/ToNumber ((c/Y c/Factorial) c/Three)) 6)) ;; boom goes the overflow
+  ;; (is (= (c/ToNumber ((c/Z c/Factorial) c/Zero)) 1))
   )
